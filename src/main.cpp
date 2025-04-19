@@ -1,5 +1,7 @@
 #include <Arduino.h>
 #include <Ticker.h>
+
+#define PID_INTERVAL 500//200  //(в милисекундах) период  для PID алгоритма
 //-----------------
 //#include "main.h"   //определяет функции во внешних файлах
 //Это внешние функции для main.cpp(слово "extern" можно опускать)
@@ -7,8 +9,14 @@ extern void disp_setup();
 extern void initSPIFFS();
 extern void web_init();
 extern void wifi_init();
-
 extern void get_uptime(); //работа Ticker - 5 сек.
+extern void pwm_setup();
+extern void pwm_handle();
+extern void setHeatPowerPercentage(float power);
+extern void disp_show();
+extern int target_val;
+extern String ds1;
+extern String ds2;
 //-----------------
 
 //Для UpTime
@@ -24,6 +32,10 @@ unsigned long iday = 0; //uptime: day
 const int analogPin = 6;
 int analogValue = 0;
 int mapVal = 9;
+
+long time_now=0; //текущее время в цикле
+long time_last=0; //хранит аремя для периодического события PID алгоритма
+
 
 void setup() {
 
@@ -59,6 +71,7 @@ void setup() {
 
   // Route for root / web page
   web_init();
+  pwm_setup();
 
   delay(100);
   Serial.printf("Free heap after create objects:\t%d \r\n", ESP.getFreeHeap());
@@ -67,18 +80,26 @@ void setup() {
 
   pinMode(33, OUTPUT); 
   digitalWrite(33, false);
+
+  time_now=millis();
+  time_last=time_now;
 }
 
 
 void loop() {
+  time_now=millis();
 
-  analogValue = analogRead(analogPin);
-  mapVal = map(analogValue, 0, 511, 100, 350);
-  Serial.println(mapVal);
+  if((time_now-time_last)>=PID_INTERVAL or time_last > time_now) { //обработка PID алгоритма
+    analogValue = analogRead(analogPin); //считываем регулятор
+    mapVal = map(analogValue, 0, 511, 0, 1000); //переводим датчик в нужный диапазон
+    //Serial.println(mapVal);
+    ds1="Raw: "+String(analogValue);ds2="Map: "+String(mapVal);disp_show(); //результат на дисплей
+    target_val = mapVal;  
+    setHeatPowerPercentage(target_val);  //задаем значение для PWM (0-1000)
+    time_last=time_now;
+    //Serial.println("Event-PID Computing.."+String(counter++)+" "+String(heatcycles));
+  }
 
-digitalWrite(33, true);
-  delay(500);
-  digitalWrite(33, false);
-  delay(500);
 
+  pwm_handle(); //обработчик PWM
 }
