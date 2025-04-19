@@ -37,7 +37,7 @@ void pwm_handle() {
     // начинаем новый период PWM !!!
     shouldUpdate = true; //нужно обновить
     newStatus = true;  //обновить - включить
-    Serial.println("__/-- "+String(heatCurrentTime)+"-"+String(heatLastTime)+"="+String(heatCurrentTime - heatLastTime));
+    //Serial.println("__/-- "+String(heatCurrentTime)+"-"+String(heatLastTime)+"="+String(heatCurrentTime - heatLastTime));
     heatLastTime = heatCurrentTime;
   }
 
@@ -45,7 +45,7 @@ void pwm_handle() {
   if (heatCurrentTime - heatLastTime >= heatcycles &&  pwmState==1) {
     shouldUpdate = true; //нужно обновить
     newStatus = false;  //обновить - выключить
-    Serial.println("--\\__ "+String(heatCurrentTime)+"-"+String(heatLastTime)+"="+String(heatCurrentTime - heatLastTime));
+    //Serial.println("--\\__ "+String(heatCurrentTime)+"-"+String(heatLastTime)+"="+String(heatCurrentTime - heatLastTime));
   }
 
   //меняем состояние выхода PWM (0/1)
