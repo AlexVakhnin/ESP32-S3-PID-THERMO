@@ -98,10 +98,9 @@ void loop() {
   if(abs(time_now-time_last)>=PID_INTERVAL or time_last > time_now) { //обработка PID алгоритма T=200
 
     int analogValue = analogRead(analogPin); //считываем регулятор
-    currentTemp = map(analogValue, 0, 511, 0, 350); //переводим датчик в нужный диапазон
+    currentTemp = (int)map(analogValue, 0, 511, 0, 350); //переводим датчик в нужный диапазон
 
     if (pid_handle()){ //вычисляем..если результат PID готов.. 
-      //Serial.println("Trg: "+String(gTargetTemp)+" Curr: "+String(currentTemp)+" Pwr: "+String(gOutputPwr));
       ds1=String((int)currentTemp)+"  "+String((int)gTargetTemp);ds2=String(gOutputPwr);disp_show(); //результат на дисплей
       setHeatPowerPercentage(gOutputPwr);  //задаем значение для PWM (0-1000)
     }

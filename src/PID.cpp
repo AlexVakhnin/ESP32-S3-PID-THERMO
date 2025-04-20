@@ -19,7 +19,7 @@ extern unsigned long time_last;
 double currentTemp = 0;
 
 double gTargetTemp=200;//S_TSET; // 32.0
-double gOvershoot=10;//S_TBAND; // 1.5  //Это Gap..
+double gOvershoot=15;//S_TBAND; // 1.5  //Это Gap..
 double gOutputPwr=0.0;
 double gP = S_P, gI = S_I, gD = S_D; // 91.0, 0.26, 7950.0
 double gaP = S_aP, gaI = S_aI, gaD = S_aD; // 100.0, 0.0, 0.0
@@ -35,12 +35,13 @@ PID ESPPID(&currentTemp, &gOutputPwr, &gTargetTemp, gP, gI, gD, DIRECT);
 //----------------------------------------LOOP------------------------------
 bool pid_handle(){
 
-    if( !overShootMode && abs(gTargetTemp-currentTemp)>=gOvershoot ) {     //ощибка по температуре большая   
-        ESPPID.SetTunings(gaP, gaI, gaD); // 100.0, 0.0, 0.0
+    double gap = abs(gTargetTemp-currentTemp); //distance away from setpoint
+    if( !overShootMode && gap >= gOvershoot ) {     //ощибка по температуре > Gap   
+        ESPPID.SetTunings(gaP, gaI, gaD); // 100.0, 0.0, 0.0 (форсаж)
         overShootMode=true;
     }
-    else if( overShootMode && abs(gTargetTemp-currentTemp)<gOvershoot ) {  //ощибка по температуре маленькая
-        ESPPID.SetTunings(gP,gI,gD); // 91.0, 0.26, 7950.0
+    else if( overShootMode && gap < gOvershoot ) {  //ощибка по температуре < Gap
+        ESPPID.SetTunings(gP,gI,gD); // 91.0, 0.26, 7950.0 (норма)
         overShootMode=false;
     }
     return ESPPID.Compute(); //сама рещает, нужно ли вычислять, если вычисляет то true
