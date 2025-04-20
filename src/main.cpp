@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <Ticker.h>
 
-#define PID_INTERVAL 500//200  //(в милисекундах) период  для PID алгоритма
+#define PID_INTERVAL 200  //(в милисекундах) период  для PID алгоритма
 //-----------------
 //#include "main.h"   //определяет функции во внешних файлах
 //Это внешние функции для main.cpp(слово "extern" можно опускать)
@@ -12,11 +12,16 @@ extern void wifi_init();
 extern void get_uptime(); //работа Ticker - 5 сек.
 extern void pwm_setup();
 extern void pwm_handle();
+extern void pid_setup();
+extern bool pid_handle();
 extern void setHeatPowerPercentage(float power);
 extern void disp_show();
-extern int target_val;
+//extern int target_val;
 extern String ds1;
 extern String ds2;
+extern double gOutputPwr; //результат вычислений PID
+extern double gTargetTemp; //целевая температура
+extern double currentTemp; //текущая температура по датчику
 //-----------------
 
 //Для UpTime
@@ -30,8 +35,8 @@ unsigned long ihour = 0; //uptime: hour
 unsigned long iday = 0; //uptime: day
 //String formatted_time = "--:--:--";
 const int analogPin = 6;
-int analogValue = 0;
-int mapVal = 9;
+//int analogValue = 0;
+//int mapVal = 9;
 
 long time_now=0; //текущее время в цикле
 long time_last=0; //хранит аремя для периодического события PID алгоритма
@@ -72,6 +77,7 @@ void setup() {
   // Route for root / web page
   web_init();
   pwm_setup();
+  pid_setup();
 
   delay(100);
   Serial.printf("Free heap after create objects:\t%d \r\n", ESP.getFreeHeap());
@@ -89,17 +95,21 @@ void setup() {
 void loop() {
   time_now=millis();
 
-  if((time_now-time_last)>=PID_INTERVAL or time_last > time_now) { //обработка PID алгоритма
-    analogValue = analogRead(analogPin); //считываем регулятор
-    mapVal = map(analogValue, 0, 511, 0, 1000); //переводим датчик в нужный диапазон
-    //Serial.println(mapVal);
-    ds1="Raw: "+String(analogValue);ds2="Map: "+String(mapVal);disp_show(); //результат на дисплей
-    target_val = mapVal;  
-    setHeatPowerPercentage(target_val);  //задаем значение для PWM (0-1000)
+  if(abs(time_now-time_last)>=PID_INTERVAL or time_last > time_now) { //обработка PID алгоритма T=200
+
+    int analogValue = analogRead(analogPin); //считываем регулятор
+    currentTemp = map(analogValue, 0, 511, 0, 350); //переводим датчик в нужный диапазон
+
+    if (pid_handle()){ //вычисляем..если результат PID готов.. 
+      //Serial.println("Trg: "+String(gTargetTemp)+" Curr: "+String(currentTemp)+" Pwr: "+String(gOutputPwr));
+      ds1=String((int)currentTemp)+"  "+String((int)gTargetTemp);ds2=String(gOutputPwr);disp_show(); //результат на дисплей
+      setHeatPowerPercentage(gOutputPwr);  //задаем значение для PWM (0-1000)
+    }
+
     time_last=time_now;
     //Serial.println("Event-PID Computing.."+String(counter++)+" "+String(heatcycles));
   }
 
 
-  pwm_handle(); //обработчик PWM
+  pwm_handle(); //обработчик PWM T=1000
 }
