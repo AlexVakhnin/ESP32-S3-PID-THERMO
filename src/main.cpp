@@ -13,7 +13,8 @@ extern void get_uptime(); //работа Ticker - 5 сек.
 extern void pwm_setup();
 extern void pwm_handle();
 extern void pid_setup();
-extern bool pid_handle();
+extern bool pid_compute();
+extern double getCurrentTemperature();
 extern void setHeatPowerPercentage(float power);
 extern void disp_show();
 //extern int target_val;
@@ -98,10 +99,11 @@ void loop() {
   if(abs(time_now-time_last)>=PID_INTERVAL or time_last > time_now) { //обработка PID алгоритма T=200
 
     int analogValue = analogRead(analogPin); //считываем регулятор
-    currentTemp = (int)map(analogValue, 0, 511, 0, 350); //переводим датчик в нужный диапазон
+    gTargetTemp = (int)map(analogValue, 0, 511, 0, 290); //переводим датчик в нужный диапазон
+    currentTemp = getCurrentTemperature(); //данные с термопары
 
-    if (pid_handle()){ //вычисляем..если результат PID готов.. 
-      ds1=String((int)currentTemp)+"  "+String((int)gTargetTemp);ds2=String(gOutputPwr);disp_show(); //результат на дисплей
+    if (pid_compute()){ //вычисляем..если результат PID готов.. 
+      ds1=String((int)gTargetTemp)+"  "+String((int)currentTemp);ds2=String(gOutputPwr);disp_show(); //результат на дисплей
       setHeatPowerPercentage(gOutputPwr);  //задаем значение для PWM (0-1000)
     }
 

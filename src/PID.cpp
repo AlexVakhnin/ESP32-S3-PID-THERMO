@@ -33,7 +33,8 @@ bool overShootMode = false;
 PID ESPPID(&currentTemp, &gOutputPwr, &gTargetTemp, gP, gI, gD, DIRECT);
 
 //----------------------------------------LOOP------------------------------
-bool pid_handle(){
+//Вычисляем результат PID  
+bool pid_compute(){
 
     double gap = abs(gTargetTemp-currentTemp); //distance away from setpoint
     if( !overShootMode && gap >= gOvershoot ) {     //ощибка по температуре > Gap   

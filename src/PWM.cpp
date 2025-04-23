@@ -1,7 +1,8 @@
 #include <Arduino.h>
 
 #define PWM_PERIOD 1000  //период PWM
-#define RELAY_PIN  33 //порт управления реле
+#define IND_PIN  33 //порт для индикации включения реле
+#define RELAY_PIN  34 //порт управления реле
 
 extern unsigned long time_now;
 //extern int counter;
@@ -16,13 +17,17 @@ unsigned long heatCurrentTime = 0;  //для вычисления интерва
 unsigned long heatLastTime = 0;  //для вычисления интервалов PWM
 
 void pwm_setup() {
-    pinMode(RELAY_PIN, OUTPUT); 
+    pinMode(RELAY_PIN, OUTPUT); //управление реле
     digitalWrite(RELAY_PIN, false);
+
+    pinMode(IND_PIN, OUTPUT); //индикация включения реле
+    digitalWrite(IND_PIN, false);
 }
 
 //меняем состояние нагревателя 
 void _turnHeatElementOnOff(bool state) {
-    digitalWrite(RELAY_PIN, state);
+    digitalWrite(RELAY_PIN, state); //реле
+    digitalWrite(IND_PIN, state); //индикация
     pwmState = state;
     //Serial.println("Set Relay="+String(state));
 }
