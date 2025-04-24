@@ -17,6 +17,8 @@ extern bool pid_compute();
 extern double getCurrentTemperature();
 extern void setHeatPowerPercentage(float power);
 extern void disp_show();
+extern void encoder_setup();
+extern void encoder_handle();
 //extern int target_val;
 extern String ds1;
 extern String ds2;
@@ -35,7 +37,8 @@ unsigned long imin = 0; //uptime: min
 unsigned long ihour = 0; //uptime: hour
 unsigned long iday = 0; //uptime: day
 //String formatted_time = "--:--:--";
-const int analogPin = 6;
+//const int analogCLK = 6; //CLK
+//const int analogDT = 7; //DT
 //int analogValue = 0;
 //int mapVal = 9;
 
@@ -79,14 +82,15 @@ void setup() {
   web_init();
   pwm_setup();
   pid_setup();
+  encoder_setup();
 
   delay(100);
   Serial.printf("Free heap after create objects:\t%d \r\n", ESP.getFreeHeap());
 
-  analogReadResolution(9);
+  //analogReadResolution(9);
 
-  pinMode(33, OUTPUT); 
-  digitalWrite(33, false);
+  //pinMode(33, OUTPUT); 
+  //digitalWrite(33, false);
 
   time_now=millis();
   time_last=time_now;
@@ -94,12 +98,13 @@ void setup() {
 
 
 void loop() {
+
   time_now=millis();
 
   if(abs(time_now-time_last)>=PID_INTERVAL or time_last > time_now) { //обработка PID алгоритма T=200
 
-    int analogValue = analogRead(analogPin); //считываем регулятор
-    gTargetTemp = (int)map(analogValue, 0, 511, 0, 290); //переводим датчик в нужный диапазон
+    //int analogValue = analogRead(analogCLK); //считываем регулятор
+    //gTargetTemp = (int)map(analogValue, 0, 511, 0, 290); //переводим датчик в нужный диапазон
     currentTemp = getCurrentTemperature(); //данные с термопары
 
     if (pid_compute()){ //вычисляем..если результат PID готов.. 
@@ -113,4 +118,6 @@ void loop() {
 
 
   pwm_handle(); //обработчик PWM T=1000
+    
+  encoder_handle();
 }
