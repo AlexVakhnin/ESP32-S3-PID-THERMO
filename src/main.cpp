@@ -19,6 +19,7 @@ extern void setHeatPowerPercentage(float power);
 extern void disp_show();
 extern void encoder_setup();
 extern void encoder_handle();
+extern int encoder_value();
 //extern int target_val;
 extern String ds1;
 extern String ds2;
@@ -105,6 +106,7 @@ void loop() {
 
     //int analogValue = analogRead(analogCLK); //считываем регулятор
     //gTargetTemp = (int)map(analogValue, 0, 511, 0, 290); //переводим датчик в нужный диапазон
+    gTargetTemp = encoder_value(); //данные с энкодера
     currentTemp = getCurrentTemperature(); //данные с термопары
 
     if (pid_compute()){ //вычисляем..если результат PID готов.. 
