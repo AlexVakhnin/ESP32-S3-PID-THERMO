@@ -112,7 +112,7 @@ void loop() {
     currentTemp = getCurrentTemperature(); //данные с термопары
 
     if (pid_compute()){ //вычисляем..если результат PID готов.. 
-      ds1=String((int)gTargetTemp)+"  "+String((int)currentTemp);ds2=String(gOutputPwr/10)+"%";disp_show(); //результат на дисплей
+      ds1=String((int)gTargetTemp)+"  "+String(currentTemp);ds2=String(gOutputPwr/10)+"%";disp_show(); //результат на дисплей
       setHeatPowerPercentage(gOutputPwr);  //задаем значение для PWM (0-1000)
     }
 

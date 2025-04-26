@@ -14,11 +14,11 @@ void IRAM_ATTR rotary_encoder() {
         if (digitalRead(DT_PIN) != currentStateCLK) {
             counter++;
             if (counter>290){counter=290;} //ограничение вверх
-            else if (counter==1){counter=100;} //пропуск (1-99) при увеличении
+            else if (counter==1){counter=50;} //пропуск (1-99) при увеличении
         } else {
             counter--;
             if (counter<0){counter=0;} //ограничение вниз
-            else if (counter==99){counter=0;} //пропуск (1-99) при уменьшении
+            else if (counter==49){counter=0;} //пропуск (1-99) при уменьшении
         }
         //Serial.print("Position: ");
         //Serial.println(counter);

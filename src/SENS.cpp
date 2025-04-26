@@ -37,15 +37,14 @@ void setupSensor(){
 
 // получаем данные с термопары
 double getCurrentTemperature(){
-    double c = thermocouple.readCelsius();
-    //double c = thermocouple.readInternal();
+    double c = thermocouple.readCelsius(); //читаем термопару
     if (isnan(c)) {
-        currentTempRead = -999;    
+      uint8_t e = thermocouple.readError();
+      if (e & MAX31855_FAULT_OPEN) currentTempRead = -111; //ХХ
+      if (e & MAX31855_FAULT_SHORT_GND) currentTempRead = -222; //КЗ земля
+      if (e & MAX31855_FAULT_SHORT_VCC) currentTempRead = -333; //КЗ питание
       } else {
         currentTempRead = c;
     }
-
-    //currentTempRead = 200;
-
     return currentTempRead;
 }
