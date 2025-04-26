@@ -2,6 +2,8 @@
 #include <SPI.h>
 #include "Adafruit_MAX31855.h"
 
+extern double currentTemp; //температура термопары
+
 #define MAXDO   16
 #define MAXCS   15
 #define MAXCLK  14
@@ -9,7 +11,6 @@
 // initialize the Thermocouple
 Adafruit_MAX31855 thermocouple(MAXCLK, MAXCS, MAXDO);
 
-double currentTempRead = 0.0;
 
 void setupSensor(){
     Serial.print("Initializing sensor...");
@@ -35,16 +36,12 @@ void setupSensor(){
     }
 }
 
-// получаем данные с термопары
-double getCurrentTemperature(){
+// получаем новые данные с термопары
+// если ошибок нет - получаем новую температуру
+// если ошибка, то отдаем старое значение
+void updateCurrentTemperature(){
     double c = thermocouple.readCelsius(); //читаем термопару
-    if (isnan(c)) {
-      uint8_t e = thermocouple.readError();
-      if (e & MAX31855_FAULT_OPEN) currentTempRead = -111; //ХХ
-      if (e & MAX31855_FAULT_SHORT_GND) currentTempRead = -222; //КЗ земля
-      if (e & MAX31855_FAULT_SHORT_VCC) currentTempRead = -333; //КЗ питание
-      } else {
-        currentTempRead = c;
+    if (!isnan(c)) { //нет ошибки
+      currentTemp = c;
     }
-    return currentTempRead;
 }

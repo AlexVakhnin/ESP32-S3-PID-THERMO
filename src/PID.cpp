@@ -18,8 +18,8 @@ extern unsigned long time_last;
 
 double currentTemp = 0;
 
-double gTargetTemp=200;//S_TSET; // 32.0
-double gOvershoot=15;//S_TBAND; // 1.5  //Это Gap..
+double gTargetTemp=S_TSET; // 32.0
+double gOvershoot=S_TBAND; // 1.5  //Это Gap..
 double gOutputPwr=0.0;
 double gP = S_P, gI = S_I, gD = S_D; // 91.0, 0.26, 7950.0
 double gaP = S_aP, gaI = S_aI, gaD = S_aD; // 100.0, 0.0, 0.0

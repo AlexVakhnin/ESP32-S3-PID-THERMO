@@ -14,7 +14,8 @@ extern void pwm_setup();
 extern void pwm_handle();
 extern void pid_setup();
 extern bool pid_compute();
-extern double getCurrentTemperature();
+//extern double getCurrentTemperature();
+extern void updateCurrentTemperature();
 extern void setHeatPowerPercentage(float power);
 extern void disp_show();
 extern void encoder_setup();
@@ -106,10 +107,9 @@ void loop() {
 
   if(abs(time_now-time_last)>=PID_INTERVAL or time_last > time_now) { //обработка PID алгоритма T=200
 
-    //int analogValue = analogRead(analogCLK); //считываем регулятор
-    //gTargetTemp = (int)map(analogValue, 0, 511, 0, 290); //переводим датчик в нужный диапазон
     gTargetTemp = encoder_value(); //данные с энкодера
-    currentTemp = getCurrentTemperature(); //данные с термопары
+    //gTargetTemp = 70;
+    updateCurrentTemperature(); //обновление текущей температуры с термопары
 
     if (pid_compute()){ //вычисляем..если результат PID готов.. 
       ds1=String((int)gTargetTemp)+"  "+String(currentTemp);ds2=String(gOutputPwr/10)+"%";disp_show(); //результат на дисплей
