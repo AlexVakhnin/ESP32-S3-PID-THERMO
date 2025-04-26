@@ -20,6 +20,7 @@ extern void disp_show();
 extern void encoder_setup();
 extern void encoder_handle();
 extern int encoder_value();
+extern void setupSensor();
 //extern int target_val;
 extern String ds1;
 extern String ds2;
@@ -84,6 +85,7 @@ void setup() {
   pwm_setup();
   pid_setup();
   encoder_setup();
+  setupSensor();
 
   delay(100);
   Serial.printf("Free heap after create objects:\t%d \r\n", ESP.getFreeHeap());
@@ -110,7 +112,7 @@ void loop() {
     currentTemp = getCurrentTemperature(); //данные с термопары
 
     if (pid_compute()){ //вычисляем..если результат PID готов.. 
-      ds1=String((int)gTargetTemp)+"  "+String((int)currentTemp);ds2=String(gOutputPwr);disp_show(); //результат на дисплей
+      ds1=String((int)gTargetTemp)+"  "+String((int)currentTemp);ds2=String(gOutputPwr/10)+"%";disp_show(); //результат на дисплей
       setHeatPowerPercentage(gOutputPwr);  //задаем значение для PWM (0-1000)
     }
 
