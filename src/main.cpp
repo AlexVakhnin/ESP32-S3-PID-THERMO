@@ -2,9 +2,7 @@
 #include <Ticker.h>
 
 #define PID_INTERVAL 200  //(в милисекундах) период  для PID алгоритма
-//-----------------
-//#include "main.h"   //определяет функции во внешних файлах
-//Это внешние функции для main.cpp(слово "extern" можно опускать)
+
 extern void disp_setup();
 extern void initSPIFFS();
 extern void web_init();
@@ -14,7 +12,6 @@ extern void pwm_setup();
 extern void pwm_handle();
 extern void pid_setup();
 extern bool pid_compute();
-//extern double getCurrentTemperature();
 extern void updateCurrentTemperature();
 extern void setHeatPowerPercentage(float power);
 extern void disp_show();
@@ -22,14 +19,12 @@ extern void encoder_setup();
 extern void encoder_handle();
 extern int encoder_value();
 extern void setupSensor();
-//extern int target_val;
 extern String ds1;
 extern String ds2;
 extern double gOutputPwr; //результат вычислений PID
 extern double gTargetTemp; //целевая температура
 extern double currentTemp; //текущая температура по датчику
 extern bool overShootMode;
-//-----------------
 
 //Для UpTime
 Ticker hTicker;
@@ -40,11 +35,6 @@ unsigned long isec = 0; //uptime: sec
 unsigned long imin = 0; //uptime: min
 unsigned long ihour = 0; //uptime: hour
 unsigned long iday = 0; //uptime: day
-//String formatted_time = "--:--:--";
-//const int analogCLK = 6; //CLK
-//const int analogDT = 7; //DT
-//int analogValue = 0;
-//int mapVal = 9;
 
 long time_now=0; //текущее время в цикле
 long time_last=0; //хранит аремя для периодического события PID алгоритма
@@ -92,15 +82,9 @@ void setup() {
   delay(100);
   Serial.printf("Free heap after create objects:\t%d \r\n", ESP.getFreeHeap());
 
-  //analogReadResolution(9);
-
-  //pinMode(33, OUTPUT); 
-  //digitalWrite(33, false);
-
   time_now=millis();
   time_last=time_now;
 }
-
 
 void loop() {
 
@@ -109,20 +93,14 @@ void loop() {
   if(abs(time_now-time_last)>=PID_INTERVAL or time_last > time_now) { //обработка PID алгоритма T=200
 
     gTargetTemp = encoder_value(); //данные с энкодера
-    //gTargetTemp = 70;
     updateCurrentTemperature(); //обновление текущей температуры с термопары
 
     if (pid_compute()){ //вычисляем..если результат PID готов.. 
-      ds1=String((int)gTargetTemp)+"  "+String(currentTemp);ds2=String(overShootMode)+"  "+String(gOutputPwr/10)+"%";disp_show(); //результат на дисплей
+      ds1=String((int)gTargetTemp)+" "+String(currentTemp);ds2=String(overShootMode)+"  "+String(gOutputPwr/10)+"%";disp_show(); //результат на дисплей
       setHeatPowerPercentage(gOutputPwr);  //задаем значение для PWM (0-1000)
     }
-
     time_last=time_now;
-    //Serial.println("Event-PID Computing.."+String(counter++)+" "+String(heatcycles));
   }
-
-
-  pwm_handle(); //обработчик PWM T=1000
-    
-  encoder_handle();
+  pwm_handle(); //обработчик PWM T=1000 
+  encoder_handle(); //обработчик кнопки энкодера
 }
