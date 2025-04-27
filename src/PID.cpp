@@ -2,16 +2,18 @@
 #include <PID_v1.h>
 
 #define PID_INTERVAL 200  //(в милисекундах) период  для PID алгоритма
-
-#define S_P 91.0
-#define S_I 0.26
-#define S_D 7950.0
+//нормальная
+#define S_P 30//91.0
+#define S_I 0.3//0.1//0.26
+#define S_D 50//7950.0
+//агрессивная
 #define S_aP 100.0
 #define S_aI 0.0
 #define S_aD 0.0
-#define S_TSET 32.0
-#define S_TBAND 1.5
-#define BUF_SIZE 1024
+
+#define S_TSET 32.0 //целевая начальная
+#define S_TBAND 2//1.5  //Это GAP !!!
+//#define BUF_SIZE 1024
 
 extern unsigned long time_now;
 extern unsigned long time_last;

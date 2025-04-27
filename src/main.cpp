@@ -28,6 +28,7 @@ extern String ds2;
 extern double gOutputPwr; //результат вычислений PID
 extern double gTargetTemp; //целевая температура
 extern double currentTemp; //текущая температура по датчику
+extern bool overShootMode;
 //-----------------
 
 //Для UpTime
@@ -112,7 +113,7 @@ void loop() {
     updateCurrentTemperature(); //обновление текущей температуры с термопары
 
     if (pid_compute()){ //вычисляем..если результат PID готов.. 
-      ds1=String((int)gTargetTemp)+"  "+String(currentTemp);ds2=String(gOutputPwr/10)+"%";disp_show(); //результат на дисплей
+      ds1=String((int)gTargetTemp)+"  "+String(currentTemp);ds2=String(overShootMode)+"  "+String(gOutputPwr/10)+"%";disp_show(); //результат на дисплей
       setHeatPowerPercentage(gOutputPwr);  //задаем значение для PWM (0-1000)
     }
 
