@@ -11,6 +11,8 @@ extern double currentTemp; //температура термопары
 // initialize the Thermocouple
 Adafruit_MAX31855 thermocouple(MAXCLK, MAXCS, MAXDO);
 
+int senserror = 0; //счетчик ошибок сенсора
+
 
 void setupSensor(){
     Serial.print("Initializing sensor...");
@@ -43,5 +45,9 @@ void updateCurrentTemperature(){
     double c = thermocouple.readCelsius(); //читаем термопару
     if (!isnan(c)) { //нет ошибки
       currentTemp = c;
+      if (senserror>=2) senserror=1;
+      if (senserror==1) senserror=0;
+    } else {
+      senserror++;
     }
 }

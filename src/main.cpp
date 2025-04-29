@@ -24,7 +24,9 @@ extern String ds2;
 extern double gOutputPwr; //результат вычислений PID
 extern double gTargetTemp; //целевая температура
 extern double currentTemp; //текущая температура по датчику
-extern bool overShootMode;
+extern bool overShootMode; //далеко от цели..
+extern int senserror; //счетчик ошибок термопары
+extern void disp_refrash(); //обновить дисплей
 
 //Для UpTime
 Ticker hTicker;
@@ -59,8 +61,6 @@ void setup() {
   Serial.printf("Total PSRAM:\t%d \r\n", ESP.getPsramSize());
   Serial.printf("Free PSRAM:\t%d \r\n", ESP.getFreePsram());
   Serial.printf("Flash size:\t%d (bytes)\r\n", ESP.getFlashChipSize());
-  Serial.println("I2C_SDA= "+String(SDA));
-  Serial.println("I2C_SCL= "+String(SCL));
   Serial.println("-----------------------------------------");
 
   initSPIFFS(); //инициализация SPIFFS
@@ -96,7 +96,7 @@ void loop() {
     updateCurrentTemperature(); //обновление текущей температуры с термопары
 
     if (pid_compute()){ //вычисляем..если результат PID готов.. 
-      ds1=String((int)gTargetTemp)+" "+String(currentTemp);ds2=String(overShootMode)+"  "+String(gOutputPwr/10)+"%";disp_show(); //результат на дисплей
+      disp_refrash();
       setHeatPowerPercentage(gOutputPwr);  //задаем значение для PWM (0-1000)
     }
     time_last=time_now;
