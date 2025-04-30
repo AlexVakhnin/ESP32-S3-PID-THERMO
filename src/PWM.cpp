@@ -5,8 +5,7 @@
 #define RELAY_PIN  34 //порт управления реле
 
 extern unsigned long time_now;
-//extern int counter;
-//extern unsigned long time_last;
+extern int senserror; //счетчик ошибок термопары
 
 int target_val = 0;
 int current_val = 0;
@@ -27,10 +26,10 @@ void pwm_setup() {
 
 //меняем состояние нагревателя 
 void _turnHeatElementOnOff(bool state) {
+    if(senserror!=0) state = 0; //блокировка, если авария датчика !!!
     digitalWrite(RELAY_PIN, state); //реле
     digitalWrite(IND_PIN, state); //индикация
     pwmState = state;
-    //Serial.println("Set Relay="+String(state));
 }
 //---------------------------------------------LOOP--------------------------------------
 void pwm_handle() {

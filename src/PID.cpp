@@ -12,21 +12,20 @@
 #define S_aD 0.0
 
 #define S_TSET 32.0 //целевая начальная
-#define S_TBAND 2//1.5  //Это GAP !!!
+#define S_TBAND 10//2//1.5  //Это GAP !!!
 //#define BUF_SIZE 1024
 
 extern unsigned long time_now;
 extern unsigned long time_last;
 
-double currentTemp = 0;
-
-double gTargetTemp=S_TSET; // 32.0
-double gOvershoot=S_TBAND; // 1.5  //Это Gap..
-double gOutputPwr=0.0;
+double currentTemp = 0; //текущая температура
+double gTargetTemp=S_TSET; //целевая температура
+double gOvershoot=S_TBAND; //Это Gap..
+double gOutputPwr=0.0; //процент мощности на нагреватель (0-1000)
 double gP = S_P, gI = S_I, gD = S_D; // 91.0, 0.26, 7950.0
 double gaP = S_aP, gaI = S_aI, gaD = S_aD; // 100.0, 0.0, 0.0
 
-bool overShootMode = false;
+bool overShootMode = false; //если true - агрессивный PID..
 
 // создаем экземпляр ESPPID, 
 // в конструктор передаем ссылки на переменные откуда брать значения и куда передавать результат
