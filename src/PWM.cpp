@@ -6,6 +6,9 @@
 
 extern unsigned long time_now;
 extern int senserror; //счетчик ошибок термопары
+extern double currentTemp;
+
+bool overheat = false; //перегрев
 
 int target_val = 0;
 int current_val = 0;
@@ -24,13 +27,20 @@ void pwm_setup() {
     digitalWrite(IND_PIN, false);
 }
 
-//меняем состояние нагревателя 
+//меняем состояние нагревателя,
+//применяем аварийные блокировки
 void _turnHeatElementOnOff(bool state) {
-    if(senserror!=0) state = 0; //блокировка, если авария датчика !!!
+
+    if(senserror!=0) state = 0; //блокировка при аварии датчика !!!
+    if(currentTemp>110/*260*/) overheat=true;//блокировка по высокой температуре !!!
+    //if(currentTemp<50) overheat=false;
+    if(overheat) state = 0;
+
     digitalWrite(RELAY_PIN, state); //реле
     digitalWrite(IND_PIN, state); //индикация
     pwmState = state;
 }
+
 //---------------------------------------------LOOP--------------------------------------
 void pwm_handle() {
   heatCurrentTime = time_now;

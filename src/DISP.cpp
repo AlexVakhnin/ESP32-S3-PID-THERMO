@@ -13,6 +13,7 @@ extern double gTargetTemp; //целевая температура
 extern double currentTemp; //текущая температура по датчику
 extern bool overShootMode; //далеко от цели..
 extern int senserror;
+extern bool overheat;
 
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 #define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
@@ -37,7 +38,8 @@ void disp_refrash(){
   double dTemp = -1;
   if (senserror==0) dTemp=currentTemp;
   ds1=String((int)gTargetTemp)+" "+String(dTemp);
-  ds2=String(overShootMode)+"  "+String(gOutputPwr/10)+"%";
+  if (overheat) ds2="OVERHEAT";
+  else ds2=String(overShootMode)+"  "+String(gOutputPwr/10)+"%";
   disp_show(); //результат на дисплей
 }
 /*
