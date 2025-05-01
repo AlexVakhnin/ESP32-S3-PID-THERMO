@@ -7,8 +7,10 @@
 extern unsigned long time_now;
 extern int senserror; //счетчик ошибок термопары
 extern double currentTemp;
+extern double rawTemp; //температура без обработки
 
 bool overheat = false; //перегрев
+volatile bool tempfail = false; //резкий обвал температуры (датчик физически отпал..)
 
 int target_val = 0;
 int current_val = 0;
@@ -32,9 +34,10 @@ void pwm_setup() {
 void _turnHeatElementOnOff(bool state) {
 
     if(senserror!=0) state = 0; //блокировка при аварии датчика !!!
-    if(currentTemp>110/*260*/) overheat=true;//блокировка по высокой температуре !!!
-    //if(currentTemp<50) overheat=false;
+    if(rawTemp>110/*260*/) overheat=true;//блокировка по высокой температуре !!!
+    //if(rawTemp<50) overheat=false;
     if(overheat) state = 0;
+    if(tempfail) state = 0;
 
     digitalWrite(RELAY_PIN, state); //реле
     digitalWrite(IND_PIN, state); //индикация

@@ -16,6 +16,7 @@ double sum_arr( double arr[], int elem );
 Adafruit_MAX31855 thermocouple(MAXCLK, MAXCS, MAXDO);
 
 int senserror = 0; //счетчик ошибок сенсора
+double rawTemp = 0; //температура датчика без обработки (без усреднения)
 double arrTemp[5]; //массив для усреднения температуры
 
 void setupSensor(){
@@ -48,6 +49,7 @@ void setupSensor(){
 void updateCurrentTemperature(){
     double c = thermocouple.readCelsius(); //читаем термопару
     if (!isnan(c)) { //нет ошибки
+      rawTemp = c; //запоминаем температуру без обработки
 
       //усреднение 5 элементов (1 сек.)
       int elem = sizeof(arrTemp) / sizeof(arrTemp[0]);//колич. элем. в массиве

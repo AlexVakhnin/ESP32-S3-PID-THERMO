@@ -4,6 +4,9 @@
 #define DT_PIN 7
 #define SW_PIN 8
 
+extern volatile bool tempfail; //флаг для блокировки реле по резкому падению температуры
+extern bool overheat; //флаг для блокировки реле по перегреву
+
 volatile int counter = 0;
 int lastStateCLK;
 
@@ -39,6 +42,8 @@ void encoder_handle() {
     if (digitalRead(SW_PIN) == LOW) {
         //Serial.println("Button Pressed");
         if(counter != 0){counter=0;}
+        tempfail = false;
+        overheat = false;
         //delay(100);
     }
 }

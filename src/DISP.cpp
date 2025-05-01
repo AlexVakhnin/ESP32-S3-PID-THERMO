@@ -14,6 +14,7 @@ extern double currentTemp; //текущая температура по датч
 extern bool overShootMode; //далеко от цели..
 extern int senserror;
 extern bool overheat;
+extern volatile bool tempfail;
 
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 #define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
@@ -39,53 +40,10 @@ void disp_refrash(){
   if (senserror==0) dTemp=currentTemp;
   ds1=String((int)gTargetTemp)+" "+String(dTemp);
   if (overheat) ds2="OVERHEAT";
+  else if (tempfail) ds2="TEMPFAIL";
   else ds2=String(overShootMode)+"  "+String(gOutputPwr/10)+"%";
   disp_show(); //результат на дисплей
 }
-/*
-// print "0"
-void disp_0(){
-    display.clearDisplay();
-    display.display();//show
-}
-
-// print "1"
-void disp_1(){
-  display.clearDisplay();
-  //display.drawRect(0,0,32,128,WHITE); //full region
-  int y0= 43;
-
-  display.fillRect(32-9,y0,9,85-2,WHITE);//43+85=128; 32-11+11=32; !!! 
-  display.fillRect(13,y0+12,11,11,WHITE);
-  display.fillTriangle(15, y0+12, 23, y0+12, 23, y0+3, WHITE);//X1,Y1,X2,Y2,X3,Y3
-  display.fillTriangle(15, y0+22, 22, y0+22, 22,  y0+17, BLACK);//X1,Y1,X2,Y2,X3,Y3
-  display.display();//show
-}
-// print "2"
-void disp_2(){
-  display.clearDisplay();
-  //display.drawRect(0,43,32,83,WHITE);//рамка знакоместа
-
-int y0= 43;
-display.fillCircle(15, y0+15, 15, WHITE);  //внешний круг
-display.fillCircle(15, y0+15, 7, BLACK);
-display.fillTriangle(0, y0+30, 15, y0+15, 31,  y0+30, BLACK);//X1,Y1,X2,Y2,X3,Y3
-display.fillTriangle(0, y0+30-5, 15, y0+15, 31,  y0+30-5, BLACK);//X1,Y1,X2,Y2,X3,Y3
-
-display.fillTriangle(0, y0+83-8, 8, y0+83-8, 31-8+1,  y0+15+1, WHITE);//ножка
-display.fillTriangle(31-8+1, y0+15+1,31-8+1+8,  y0+15+1, 8, y0+83-8, WHITE);//X1,Y1,X2,Y2,X3,Y3
-
-
-
-display.fillRect(0,y0+83-8,32,8,WHITE); //подставка
-
-//void drawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color);
-
-
-
-display.display();//show
-}
-*/
 
 //SSD1306 OLED Init
 void disp_setup(){

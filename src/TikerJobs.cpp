@@ -1,3 +1,4 @@
+#include <Arduino.h>
 
 //внешние переменные
 
@@ -7,6 +8,10 @@ extern unsigned long imin;
 extern unsigned long isec;
 extern unsigned long iday;
 
+extern double rawTemp; //температура для анализа обвала температуры
+extern volatile bool tempfail; //флаг для блокировки реле
+
+double oldrawTemp = 0; //тут запоминаем с периодом 5 сек.
 
 //вычислить uptime д/ч/м/с (вызывается с периодом 5 сек)
 void get_uptime(){
@@ -18,4 +23,8 @@ void get_uptime(){
     n /= 60; //количество всех часов (целая часть)
     ihour = n % 24; //остаток от деления на 24 (часов в дне)
     iday = n/24; //количество всех дней (целая часть)
+
+    //устанавливаем блокировку по резкому обвалу температуры
+    if (oldrawTemp>rawTemp and abs(oldrawTemp-rawTemp)>2){tempfail = true;}
+    oldrawTemp = rawTemp;
 }
