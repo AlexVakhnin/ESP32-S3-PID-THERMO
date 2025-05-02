@@ -2,8 +2,11 @@
 #include <SPI.h>
 #include "Adafruit_MAX31855.h"
 
+#define SENS_PERIOD 100
+
 extern double currentTemp; //температура термопары
 extern bool overShootMode;
+extern unsigned long time_now;
 
 #define MAXDO   16
 #define MAXCS   15
@@ -18,6 +21,9 @@ Adafruit_MAX31855 thermocouple(MAXCLK, MAXCS, MAXDO);
 int senserror = 0; //счетчик ошибок сенсора
 double rawTemp = 0; //температура датчика без обработки (без усреднения)
 double arrTemp[5]; //массив для усреднения температуры
+unsigned long sensCurrentTime = 0;  //для вычисления интервалов опросов датчика
+unsigned long sensLastTime = 0;  //для вычисления интервалов опросов датчика
+
 
 void setupSensor(){
     Serial.print("Initializing sensor...");
@@ -47,6 +53,10 @@ void setupSensor(){
 // если ошибок нет - получаем новую температуру
 // если ошибка, то оставляем старое значение
 void updateCurrentTemperature(){
+  sensCurrentTime = time_now;
+  //формируем период опроса датчика
+  if(sensCurrentTime - sensLastTime >= SENS_PERIOD or sensLastTime > sensCurrentTime) {
+
     double c = thermocouple.readCelsius(); //читаем термопару
     if (!isnan(c)) { //нет ошибки
       rawTemp = c; //запоминаем температуру без обработки
@@ -64,6 +74,8 @@ void updateCurrentTemperature(){
     } else {
       senserror++;
     }
+    sensLastTime = sensCurrentTime;
+  }
 }
 
 //сдвиг элементов массива влево с добавлением нового значения

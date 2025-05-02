@@ -89,11 +89,11 @@ void setup() {
 void loop() {
 
   time_now=millis();
+  updateCurrentTemperature(); //обновление текущей температуры с термопары (100 мс.)
 
   if(abs(time_now-time_last)>=PID_INTERVAL or time_last > time_now) { //обработка PID алгоритма T=200
 
     gTargetTemp = encoder_value(); //данные с энкодера
-    updateCurrentTemperature(); //обновление текущей температуры с термопары
 
     if (pid_compute()){ //вычисляем..если результат PID готов.. 
       disp_refrash();
