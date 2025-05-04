@@ -16,7 +16,7 @@ int target_val = 0;
 int current_val = 0;
 
 float heatcycles = 0; //время в милисекундах верхней полки PWM (0-1000) - мощность нагрева !!!
-float mem_heatcycles = 0; //запоминаем длительность импульса в начале периода
+//float mem_heatcycles = 0; //запоминаем длительность импульса в начале периода
 bool pwmState = 0; //содержит текущее состояние выхода PWM (0/1)
 unsigned long heatCurrentTime = 0;  //для вычисления интервалов PWM
 unsigned long heatLastTime = 0;  //для вычисления интервалов PWM
@@ -50,10 +50,10 @@ void pwm_handle() {
   bool newStatus = false;
   bool shouldUpdate = false;
 
-  //формируем период PWM
+  //формируем период PWM (T=1 сек.)
   if(heatCurrentTime - heatLastTime >= PWM_PERIOD or heatLastTime > heatCurrentTime) { //второй оператор предотвращает ошибки переполнения
     // начинаем новый период PWM !!!
-    mem_heatcycles = heatcycles; //
+    //mem_heatcycles = heatcycles; //
     shouldUpdate = true; //нужно обновить
     newStatus = true;  //обновить - включить
     //Serial.println("__/-- "+String(heatCurrentTime)+"-"+String(heatLastTime)+"="+String(heatCurrentTime - heatLastTime));
@@ -61,7 +61,7 @@ void pwm_handle() {
   }
 
   // формируем длительность импульса PWM
-  if (heatCurrentTime - heatLastTime >= mem_heatcycles &&  pwmState==1) {
+  if (heatCurrentTime - heatLastTime >= /*mem_*/heatcycles &&  pwmState==1) {
     shouldUpdate = true; //нужно обновить
     newStatus = false;  //обновить - выключить
     //Serial.println("--\\__ "+String(heatCurrentTime)+"-"+String(heatLastTime)+"="+String(heatCurrentTime - heatLastTime));

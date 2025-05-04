@@ -19,6 +19,7 @@ double sum_arr( double arr[], int elem );
 Adafruit_MAX31855 thermocouple(MAXCLK, MAXCS, MAXDO);
 
 int senserror = 0; //счетчик ошибок сенсора
+int kind_error = -4; //вид ошибки сенсора
 double rawTemp = 0; //температура датчика без обработки (без усреднения)
 double arrTemp[5]; //массив для усреднения температуры
 unsigned long sensCurrentTime = 0;  //для вычисления интервалов опросов датчика
@@ -43,6 +44,7 @@ void setupSensor(){
       if (e & MAX31855_FAULT_OPEN) Serial.println("FAULT: Thermocouple is open - no connections.");
       if (e & MAX31855_FAULT_SHORT_GND) Serial.println("FAULT: Thermocouple is short-circuited to GND.");
       if (e & MAX31855_FAULT_SHORT_VCC) Serial.println("FAULT: Thermocouple is short-circuited to VCC.");
+
     } else {
       Serial.print("C = ");
       Serial.println(c);
@@ -59,19 +61,24 @@ void updateCurrentTemperature(){
 
     double c = thermocouple.readCelsius(); //читаем термопару
     if (!isnan(c)) { //нет ошибки
-      rawTemp = c; //запоминаем температуру без обработки
+      rawTemp = c; //запоминаем температуру без обработки для TRMPFAIL
 
-      //усреднение 5 элементов (1 сек.)
+      //усреднение 5 элементов (0.5 сек.)
       int elem = sizeof(arrTemp) / sizeof(arrTemp[0]);//колич. элем. в массиве
       push_arr( arrTemp, elem, c );//сдвиг массива arrTemp влево
       double roundTemp = sum_arr(arrTemp,elem)/elem; //усредняем знач.
 
-      if (overShootMode) currentTemp = c; //агрессивный
-      else currentTemp = roundTemp;       //нормальный
+      currentTemp = c;
+      //if (overShootMode) currentTemp = c; //агрессивный
+      //else currentTemp = roundTemp;       //нормальный
 
       if (senserror>=2) senserror=1;
-      if (senserror==1) senserror=0;
+      if (senserror==1) {senserror=0;kind_error = -4;}
     } else {
+      uint8_t e = thermocouple.readError();
+      if (e & MAX31855_FAULT_OPEN) kind_error = -1;
+      if (e & MAX31855_FAULT_SHORT_GND) kind_error = -2;
+      if (e & MAX31855_FAULT_SHORT_VCC) kind_error = -3;
       senserror++;
     }
     sensLastTime = sensCurrentTime;
