@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <Ticker.h>
 
-#define PID_INTERVAL 200  //(в милисекундах) период  для PID алгоритма
+#define RFR_INTERVAL 200  //(в милисекундах) период  для PID алгоритма
 
 extern void disp_setup();
 extern void initSPIFFS();
@@ -11,6 +11,7 @@ extern void get_uptime(); //работа Ticker - 5 сек.
 extern void pwm_setup();
 extern void pwm_handle();
 extern void pid_setup();
+extern void pid_set_tun();
 extern bool pid_compute();
 extern void updateCurrentTemperature();
 extern void setHeatPowerPercentage(float power);
@@ -91,16 +92,17 @@ void loop() {
   time_now=millis();
   updateCurrentTemperature(); //обновление текущей температуры с термопары (100 мс.)
 
-  if(abs(time_now-time_last)>=PID_INTERVAL or time_last > time_now) { //обработка PID алгоритма T=200
-
-    gTargetTemp = encoder_value(); //данные с энкодера
-
-    if (pid_compute()){ //вычисляем..если результат PID готов.. 
+  if(abs(time_now-time_last)>=RFR_INTERVAL or time_last > time_now) { //обработка задач для T=200 мс.
+      gTargetTemp = encoder_value(); //данные с энкодера
       disp_refrash();
-      setHeatPowerPercentage(gOutputPwr);  //задаем значение для PWM (0-1000)
-    }
-    time_last=time_now;
+      pid_set_tun();
+      time_last=time_now;
   }
+
+  if (pid_compute()){ //вычисляем..если результат PID готов.. 
+      setHeatPowerPercentage(gOutputPwr);  //задаем значение для PWM (0-1000)
+  }
+
   pwm_handle(); //обработчик PWM T=1000 
   encoder_handle(); //обработчик кнопки энкодера
 }

@@ -12,9 +12,6 @@ extern double rawTemp; //температура без обработки
 bool overheat = false; //перегрев
 volatile bool tempfail = false; //резкий обвал температуры (датчик физически отпал..)
 
-int target_val = 0;
-int current_val = 0;
-
 float heatcycles = 0; //время в милисекундах верхней полки PWM (0-1000) - мощность нагрева !!!
 //float mem_heatcycles = 0; //запоминаем длительность импульса в начале периода
 bool pwmState = 0; //содержит текущее состояние выхода PWM (0/1)

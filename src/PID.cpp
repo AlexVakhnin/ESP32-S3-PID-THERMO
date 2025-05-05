@@ -33,9 +33,8 @@ bool overShootMode = false; //если true - агрессивный PID..
 // так же задаем коэффициенты для PID -> gP, gI, gD
 PID ESPPID(&currentTemp, &gOutputPwr, &gTargetTemp, gP, gI, gD, DIRECT);
 
-//----------------------------------------LOOP------------------------------
-//Вычисляем результат PID  
-bool pid_compute(){
+//новые коэффициенты для PID  
+void pid_set_tun(){
 
     double gap = abs(gTargetTemp-currentTemp); //distance away from setpoint
     if( !overShootMode && gap >= gOvershoot ) {     //ощибка по температуре > Gap   
@@ -46,10 +45,14 @@ bool pid_compute(){
         ESPPID.SetTunings(gP,gI,gD); // 91.0, 0.26, 7950.0 (норма)
         overShootMode=false;
     }
+}
+
+//вычисляет PID
+bool pid_compute(){
     return ESPPID.Compute(); //сама рещает, нужно ли вычислять, если вычисляет то true
 }
-//-------------------------------------END LOOP----------------------------
 
+//задаем коэффициенты, период, выходной диапазон, режим работы
 void pid_setup(){
 
   // start PID
