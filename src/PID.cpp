@@ -7,12 +7,12 @@
 #define S_I 0.5//0.4//0.3//0.3//0.1//0.26
 #define S_D 250//350//400//500//4500//150//50//7950.0
 //агрессивная
-#define S_aP 65//50//100.0
+#define S_aP 80//50//100.0
 #define S_aI 0.0
 #define S_aD 0.0
 
 #define S_TSET 32.0 //целевая начальная
-#define S_TBAND 5//10//2//1.5  //Это GAP !!!
+#define S_TBAND 4//10//2//1.5  //Это GAP !!!
 //#define BUF_SIZE 1024
 
 extern unsigned long time_now;
