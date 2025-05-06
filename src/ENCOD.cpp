@@ -16,7 +16,7 @@ void IRAM_ATTR rotary_encoder() {
     if (currentStateCLK != lastStateCLK) {
         if (digitalRead(DT_PIN) != currentStateCLK) {
             counter++;
-            if (counter>290){counter=290;} //ограничение вверх
+            if (counter>340){counter=340;} //ограничение вверх
             else if (counter==1){counter=50;} //пропуск (1-99) при увеличении
         } else {
             counter--;

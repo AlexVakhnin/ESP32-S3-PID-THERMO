@@ -31,7 +31,7 @@ void pwm_setup() {
 void _turnHeatElementOnOff(bool state) {
 
     if(senserror!=0) state = 0; //блокировка при аварии датчика !!!
-    if(rawTemp>270) overheat=true;//блокировка по высокой температуре !!!
+    if(rawTemp>=350) overheat=true;//блокировка по высокой температуре !!!
     //if(rawTemp<50) overheat=false;
     if(overheat) state = 0;
     if(tempfail) state = 0;
