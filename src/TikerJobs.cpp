@@ -1,17 +1,16 @@
 #include <Arduino.h>
 
-//внешние переменные
-
-extern unsigned long sUpTime;
-extern unsigned long ihour;
-extern unsigned long imin;
-extern unsigned long isec;
-extern unsigned long iday;
 
 extern double rawTemp; //температура для анализа обвала температуры
 extern volatile bool tempfail; //флаг для блокировки реле
 
 double oldrawTemp = 0; //тут запоминаем с периодом 5 сек.
+
+unsigned long sUpTime;
+unsigned long ihour;
+unsigned long imin;
+unsigned long isec;
+unsigned long iday;
 
 //вычислить uptime д/ч/м/с (вызывается с периодом 5 сек)
 void get_uptime(){

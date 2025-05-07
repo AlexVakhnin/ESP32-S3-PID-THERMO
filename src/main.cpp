@@ -1,9 +1,10 @@
 #include <Arduino.h>
 #include <Ticker.h>
 
-#define RFR_INTERVAL 200  //(в милисекундах) период  для PID алгоритма
+#define RFR_INTERVAL 200  //для задач энкодер, дисплей (200 мс.)
 
 extern void disp_setup();
+extern void disp_refrash(); //обновить дисплей
 extern void initSPIFFS();
 extern void web_init();
 extern void wifi_init();
@@ -15,7 +16,6 @@ extern void pid_set_tun();
 extern bool pid_compute();
 extern void updateCurrentTemperature();
 extern void setHeatPowerPercentage(float power);
-extern void disp_show();
 extern void encoder_setup();
 extern void encoder_handle();
 extern int encoder_value();
@@ -27,17 +27,16 @@ extern double gTargetTemp; //целевая температура
 extern double currentTemp; //текущая температура по датчику
 extern bool overShootMode; //далеко от цели..
 extern int senserror; //счетчик ошибок термопары
-extern void disp_refrash(); //обновить дисплей
 
 //Для UpTime
 Ticker hTicker;
 
 //Global Variables
-unsigned long sUpTime;
-unsigned long isec = 0; //uptime: sec
-unsigned long imin = 0; //uptime: min
-unsigned long ihour = 0; //uptime: hour
-unsigned long iday = 0; //uptime: day
+//unsigned long sUpTime;
+//unsigned long isec = 0; //uptime: sec
+//unsigned long imin = 0; //uptime: min
+//unsigned long ihour = 0; //uptime: hour
+//unsigned long iday = 0; //uptime: day
 
 long time_now=0; //текущее время в цикле
 long time_last=0; //хранит аремя для периодического события PID алгоритма

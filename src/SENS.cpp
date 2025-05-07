@@ -21,11 +21,12 @@ Adafruit_MAX31855 thermocouple(MAXCLK, MAXCS, MAXDO);
 int senserror = 0; //счетчик ошибок сенсора
 int kind_error = -4; //вид ошибки сенсора
 double rawTemp = 0; //температура датчика без обработки (без усреднения)
-double arrTemp[5]; //массив для усреднения температуры
+double filtTemp = 0; //фильтрованное значение температуры (IIR-фильтр)
+double arrTemp[5]; //массив для усреднения температуры (FIR-фильтр)
 unsigned long sensCurrentTime = 0;  //для вычисления интервалов опросов датчика
 unsigned long sensLastTime = 0;  //для вычисления интервалов опросов датчика
 
-
+//инициализация сенсора
 void setupSensor(){
     Serial.print("Initializing sensor...");
     if (!thermocouple.begin()) {
@@ -64,13 +65,15 @@ void updateCurrentTemperature(){
       rawTemp = c; //запоминаем температуру без обработки для TRMPFAIL
 
       //усреднение 5 элементов (0.5 сек.)
-      int elem = sizeof(arrTemp) / sizeof(arrTemp[0]);//колич. элем. в массиве
-      push_arr( arrTemp, elem, c );//сдвиг массива arrTemp влево
-      double roundTemp = sum_arr(arrTemp,elem)/elem; //усредняем знач.
+      //int elem = sizeof(arrTemp) / sizeof(arrTemp[0]);//колич. элем. в массиве
+      //push_arr( arrTemp, elem, c );//сдвиг массива arrTemp влево
+      //double roundTemp = sum_arr(arrTemp,elem)/elem; //усредняем знач.(FIR)
+      filtTemp += (c - filtTemp) * 0.3; //фильтр (IIR)
 
-      currentTemp = c;
+      currentTemp = filtTemp;
+      //currentTemp = c;
       //if (overShootMode) currentTemp = c; //агрессивный
-      //else currentTemp = roundTemp;       //нормальный
+      //else currentTemp = filtTemp;       //нормальный с фильтрованным значением
 
       if (senserror>=2) senserror=1;
       if (senserror==1) {senserror=0;kind_error = -4;}

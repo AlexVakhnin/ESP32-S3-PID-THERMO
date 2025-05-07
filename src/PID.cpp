@@ -10,9 +10,9 @@
 #define S_aP 80//85//50//100.0
 #define S_aI 0.0
 #define S_aD 0.0
+#define S_TBAND 10//2//1.5  //Это GAP !!!
 
 #define S_TSET 32.0 //целевая начальная
-#define S_TBAND 4//10//2//1.5  //Это GAP !!!
 //#define BUF_SIZE 1024
 
 extern unsigned long time_now;
