@@ -24,6 +24,8 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 String ds1 = ""; //дисплей-строка 1
 String ds2 = ""; //дисплей-строка 2
 
+//char buffer[50]; //для sprintf()
+
 // Обновление состояния дисплея
 void disp_show(){
   display.clearDisplay();
@@ -39,7 +41,12 @@ void disp_show(){
 void disp_refrash(){
   double dTemp = kind_error;
   if (senserror==0) dTemp=currentTemp;
+
+
+  //sprintf(buffer, "%3d %3.2f", (int)gTargetTemp,dTemp);
+  //ds1=String(buffer);
   ds1=String((int)gTargetTemp)+" "+String(dTemp);
+
   if (overheat) ds2="OVERHEAT";
   else if (tempfail) ds2="TEMPFAIL";
   else ds2=String(overShootMode)+"  "+String(gOutputPwr/10)+"%";

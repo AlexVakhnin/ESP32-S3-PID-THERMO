@@ -172,9 +172,9 @@ server.on("/posts", HTTP_POST, [](AsyncWebServerRequest *request){
     server.on("/jsong0", HTTP_GET, [](AsyncWebServerRequest *request){
       //switch_flag = 0;
       AsyncResponseStream *response = request->beginResponseStream("application/json");    
-      const int capacity = JSON_OBJECT_SIZE(36);//Количество живых параметров = 36
+      const int capacity = JSON_OBJECT_SIZE(108);//Количество живых параметров = 108
       StaticJsonDocument<capacity> doc;
-          for (int i = 35; i >= 0; i--) {  //график №1 в JSON
+          for (int i = 107; i >= 0; i--) {  //график №1 в JSON
             doc.add( arrTemp[i] ); //simply array !!!
           }
       serializeJson(doc, *response);

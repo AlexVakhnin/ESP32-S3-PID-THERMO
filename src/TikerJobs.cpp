@@ -11,7 +11,8 @@ unsigned long ihour;
 unsigned long imin;
 unsigned long isec;
 unsigned long iday;
-volatile unsigned int arrTemp[36]= {0}; //окно - 3 мин.
+volatile unsigned int arrTemp[108]= {0}; //окно - 27 мин.(15*108/60)
+int counter_15s = 0;
 
 
 //сдвиг элементов массива влево с добавлением нового значения
@@ -25,6 +26,18 @@ void push_arr( volatile unsigned int arr[], int elem, unsigned int n ){
 
 //вычислить uptime д/ч/м/с (вызывается с периодом 5 сек)
 void get_uptime(){
+
+    if ( counter_15s > 0 ){counter_15s--;}
+    else { 
+        counter_15s = 2; //3*5=15
+
+        //работа с массивом для графика
+        int elements = sizeof(arrTemp) / sizeof(arrTemp[0]);//колич. точек X графика
+        push_arr( arrTemp, elements, currentTemp*100 );//сдвиг массива arrTemp влево
+    }
+  
+
+
     sUpTime+=5;  //прибавляем 5 сек
     auto n=sUpTime; //количество всех секунд
     isec = n % 60;  //остаток от деления на 60 (секунд в минуте)
@@ -35,10 +48,7 @@ void get_uptime(){
     iday = n/24; //количество всех дней (целая часть)
 
     //устанавливаем блокировку по резкому обвалу температуры
-    if (oldrawTemp>rawTemp and abs(oldrawTemp-rawTemp)>2){tempfail = true;}
+    if (oldrawTemp>rawTemp and abs(oldrawTemp-rawTemp)>10){tempfail = true;}
     oldrawTemp = rawTemp;
 
-    //работа с массивом для графика
-    int elements = sizeof(arrTemp) / sizeof(arrTemp[0]);//колич. точек X графика
-    push_arr( arrTemp, elements, currentTemp*100 );//сдвиг массива arrTemp влево
 }

@@ -14,7 +14,7 @@ extern unsigned long imin;
 extern unsigned long isec;
 extern unsigned long iday;
 
-extern volatile unsigned int arrTemp[36];
+extern volatile unsigned int arrTemp[108];
 
 extern void handleLogin(AsyncWebServerRequest *request);
 extern void handleLogout(AsyncWebServerRequest *request);

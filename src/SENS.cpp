@@ -69,7 +69,7 @@ void updateCurrentTemperature(){
       //push_arr( arrTemp, elem, c );//сдвиг массива arrTemp влево
       //double roundTemp = sum_arr(arrTemp,elem)/elem; //усредняем знач.(FIR)
 
-      filtTemp += (c - filtTemp) * 0.3; //фильтр (IIR)
+      filtTemp += (c - filtTemp) * 0.2; //фильтр (IIR)
       currentTemp = (round(filtTemp*100))/100;
       //currentTemp = c;
       //if (overShootMode) currentTemp = c; //агрессивный
