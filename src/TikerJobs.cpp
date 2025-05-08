@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
-
-extern double rawTemp; //температура для анализа обвала температуры
+extern double currentTemp; //температура термопары фильтрованная
+extern double rawTemp; //температура без фильтра 
 extern volatile bool tempfail; //флаг для блокировки реле
 
 double oldrawTemp = 0; //тут запоминаем с периодом 5 сек.
@@ -11,6 +11,17 @@ unsigned long ihour;
 unsigned long imin;
 unsigned long isec;
 unsigned long iday;
+volatile unsigned int arrTemp[36]= {0}; //окно - 3 мин.
+
+
+//сдвиг элементов массива влево с добавлением нового значения
+void push_arr( volatile unsigned int arr[], int elem, unsigned int n ){
+    for (int i=elem-1;i>0;i--){
+        arr[i] = arr[i-1];
+    }
+    arr[0] = n;
+}
+
 
 //вычислить uptime д/ч/м/с (вызывается с периодом 5 сек)
 void get_uptime(){
@@ -26,4 +37,8 @@ void get_uptime(){
     //устанавливаем блокировку по резкому обвалу температуры
     if (oldrawTemp>rawTemp and abs(oldrawTemp-rawTemp)>2){tempfail = true;}
     oldrawTemp = rawTemp;
+
+    //работа с массивом для графика
+    int elements = sizeof(arrTemp) / sizeof(arrTemp[0]);//колич. точек X графика
+    push_arr( arrTemp, elements, currentTemp*100 );//сдвиг массива arrTemp влево
 }

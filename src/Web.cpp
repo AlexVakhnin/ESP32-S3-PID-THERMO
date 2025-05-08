@@ -97,6 +97,11 @@ server.on("/posts", HTTP_POST, [](AsyncWebServerRequest *request){
     server.on("/login", HTTP_POST, handleLogin);
     server.on("/logout", HTTP_GET, handleLogout);
 
+    server.on("/graph.html", HTTP_GET, [](AsyncWebServerRequest *request){
+      request->send(SPIFFS, "/graph.html", String(), false, processor);
+    });
+  
+
     // Все картинки кэшируем без проверки
     server.on("/signin.png", HTTP_GET, [](AsyncWebServerRequest *request){
     AsyncWebServerResponse *response = request->beginResponse(SPIFFS, "/signin.png", "image/png");
@@ -127,6 +132,19 @@ server.on("/posts", HTTP_POST, [](AsyncWebServerRequest *request){
     request->send(response);
     });
 
+      // Route to load style.css file
+  server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/style.css", "text/css");
+  });
+
+  // Route to load Chart.min.js file
+  server.on("/Chart.min.js", HTTP_GET, [](AsyncWebServerRequest *request){
+    AsyncWebServerResponse *response = request->beginResponse(SPIFFS, "/Chart.min.js", "text/javascript");
+    response->addHeader("Cache-Control","max-age=3600"); /*very important !!!!!*/
+    request->send(response);
+  });
+
+
   // Это ответ сервера на AJAX запрос из WEB страницы"
   // с проверкой аутентификации
   server.on("/jsonstate", HTTP_GET, [](AsyncWebServerRequest *request){
@@ -149,6 +167,20 @@ server.on("/posts", HTTP_POST, [](AsyncWebServerRequest *request){
       request->send(200, "text/plain","Authentication Error"); //ответ, т.к вызываем в фоне
     }
   });
+
+    // переключатель графиков -> график №1
+    server.on("/jsong0", HTTP_GET, [](AsyncWebServerRequest *request){
+      //switch_flag = 0;
+      AsyncResponseStream *response = request->beginResponseStream("application/json");    
+      const int capacity = JSON_OBJECT_SIZE(36);//Количество живых параметров = 36
+      StaticJsonDocument<capacity> doc;
+          for (int i = 35; i >= 0; i--) {  //график №1 в JSON
+            doc.add( arrTemp[i] ); //simply array !!!
+          }
+      serializeJson(doc, *response);
+      request->send(response);    
+    });
+  
 
     //Точка входа для всех защищенных страниц, для которых нет директив httpServer.on(...)
     server.onNotFound([](AsyncWebServerRequest *request) {   //клиентский запрос URL

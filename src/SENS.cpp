@@ -2,7 +2,7 @@
 #include <SPI.h>
 #include "Adafruit_MAX31855.h"
 
-#define SENS_PERIOD 100
+#define SENS_PERIOD 150
 
 extern double currentTemp; //температура термопары
 extern bool overShootMode;
@@ -12,8 +12,8 @@ extern unsigned long time_now;
 #define MAXCS   15
 #define MAXCLK  14
 
-void push_arr( double arr[], int elem, double n );
-double sum_arr( double arr[], int elem );
+//void push_arr( double arr[], int elem, double n );
+//double sum_arr( double arr[], int elem );
 
 // initialize the Thermocouple
 Adafruit_MAX31855 thermocouple(MAXCLK, MAXCS, MAXDO);
@@ -22,7 +22,7 @@ int senserror = 0; //счетчик ошибок сенсора
 int kind_error = -4; //вид ошибки сенсора
 double rawTemp = 0; //температура датчика без обработки (без усреднения)
 double filtTemp = 0; //фильтрованное значение температуры (IIR-фильтр)
-double arrTemp[5]; //массив для усреднения температуры (FIR-фильтр)
+//double arrTemp[5]; //массив для усреднения температуры (FIR-фильтр)
 unsigned long sensCurrentTime = 0;  //для вычисления интервалов опросов датчика
 unsigned long sensLastTime = 0;  //для вычисления интервалов опросов датчика
 
@@ -68,9 +68,9 @@ void updateCurrentTemperature(){
       //int elem = sizeof(arrTemp) / sizeof(arrTemp[0]);//колич. элем. в массиве
       //push_arr( arrTemp, elem, c );//сдвиг массива arrTemp влево
       //double roundTemp = sum_arr(arrTemp,elem)/elem; //усредняем знач.(FIR)
-      filtTemp += (c - filtTemp) * 0.3; //фильтр (IIR)
 
-      currentTemp = filtTemp;
+      filtTemp += (c - filtTemp) * 0.3; //фильтр (IIR)
+      currentTemp = (round(filtTemp*100))/100;
       //currentTemp = c;
       //if (overShootMode) currentTemp = c; //агрессивный
       //else currentTemp = filtTemp;       //нормальный с фильтрованным значением
@@ -87,7 +87,7 @@ void updateCurrentTemperature(){
     sensLastTime = sensCurrentTime;
   }
 }
-
+/*
 //сдвиг элементов массива влево с добавлением нового значения
 void push_arr( double arr[], int elem, double n )
 {
@@ -111,3 +111,4 @@ double sum_arr( double arr[], int elem )
     }
     return sum;
 }
+*/
