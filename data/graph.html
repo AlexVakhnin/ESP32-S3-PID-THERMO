@@ -72,10 +72,17 @@ var myChart = new Chart(ctx_live, {
   
 });
 
-//заполнение массивов с временными метками для графиков==============================================
 
+//сдвигаем массив данных
+function addData(chart,/* label,*/ newData) {
+    //chart.data.labels.push(label);
+    chart.data.datasets.forEach((dataset) => {
+        dataset.data.push(newData);
+    });
+    chart.update();
+}
 
-
+//обновляем все данные периодически
     setInterval(function ( ) {  /*период 5 сек.*/
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {	  
@@ -86,8 +93,8 @@ var myChart = new Chart(ctx_live, {
         for (var i=0;i<=107;i++){
             myChart.data.datasets[0].data[i] = myObj[i]/100; /*копируем сами данные*/
 		    }
-
 		    myChart.update(); //обновить картинку графика
+
       }
     };
     xhttp.open("GET", "/jsong0", true);

@@ -2,10 +2,10 @@
 #include <PID_v1.h>
 
 #define PID_INTERVAL 500//1000//200  //(в милисекундах) период  для PID алгоритма !!!
-//нормальная (75,0.3,500)
-#define S_P 75//70//75//20//30//91.0
-#define S_I 0.7//0.8//1.2//2.0//1.6//1.2//0.8//0.4//0.3//0.3//0.1//0.26
-#define S_D 1200//800//350//400//500//4500//150//50//7950.0
+//нормальная (хорошие рабочие 75, 0.7, 1200 gap=10 65, 0.0, 0.0 !!!)
+#define S_P 75//91.0
+#define S_I 0.7//0.26
+#define S_D 1200//7950.0
 //агрессивная
 #define S_aP 65//85//50//100.0
 #define S_aI 0.0
@@ -20,10 +20,10 @@ extern unsigned long time_last;
 
 double currentTemp = 0; //текущая температура
 double gTargetTemp=S_TSET; //целевая температура
-double gOvershoot=S_TBAND; //Это Gap..
 double gOutputPwr=0.0; //процент мощности на нагреватель (0-1000)
-double gP = S_P, gI = S_I, gD = S_D; // 91.0, 0.26, 7950.0
-double gaP = S_aP, gaI = S_aI, gaD = S_aD; // 100.0, 0.0, 0.0
+double gOvershoot=S_TBAND; //Это Gap..
+double gP = S_P, gI = S_I, gD = S_D; // 91.0, 0.26, 7950.0 - STD
+double gaP = S_aP, gaI = S_aI, gaD = S_aD; // 100.0, 0.0, 0.0 - STD
 
 bool overShootMode = false; //если true - агрессивный PID..
 

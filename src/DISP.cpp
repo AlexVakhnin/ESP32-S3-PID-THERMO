@@ -43,7 +43,7 @@ void disp_refrash(){
   if (senserror==0) dTemp=currentTemp;
 
 
-  //sprintf(buffer, "%3d %3.2f", (int)gTargetTemp,dTemp);
+  //sprintf(buffer, "%3d %.2f", (int)gTargetTemp,dTemp);
   //ds1=String(buffer);
   ds1=String((int)gTargetTemp)+" "+String(dTemp);
 

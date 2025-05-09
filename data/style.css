@@ -53,6 +53,12 @@ background-color: #f2f3f3;
 	font-size: 18px;
 	font-weight: 700;
 }
+.pid-inf {  /*под графиком, нижняя строка*/
+	margin-block-start: 5px;
+	margin-block-end: 5px;	
+	font-size: 18px;
+	font-weight: 700;
+}
 #freemem {  /*желтая подсветка*/
   /*border: red 2px solid;*/
   background-color: #f7ec88;

@@ -168,7 +168,7 @@ server.on("/posts", HTTP_POST, [](AsyncWebServerRequest *request){
     }
   });
 
-    // переключатель графиков -> график №1
+    // график №1
     server.on("/jsong0", HTTP_GET, [](AsyncWebServerRequest *request){
       //switch_flag = 0;
       AsyncResponseStream *response = request->beginResponseStream("application/json");    
@@ -177,6 +177,22 @@ server.on("/posts", HTTP_POST, [](AsyncWebServerRequest *request){
           for (int i = 107; i >= 0; i--) {  //график №1 в JSON
             doc.add( arrTemp[i] ); //simply array !!!
           }
+      serializeJson(doc, *response);
+      request->send(response);    
+    });
+
+    // текущие данные для графика №1
+    server.on("/jsond0", HTTP_GET, [](AsyncWebServerRequest *request){
+      //switch_flag = 0;
+      AsyncResponseStream *response = request->beginResponseStream("application/json");    
+      const int capacity = JSON_OBJECT_SIZE(3);//Количество живых параметров = 108
+      StaticJsonDocument<capacity> doc;
+          //for (int i = 2; i >= 0; i--) {  //график №1 в JSON
+          //  doc.add( arrTemp[i] ); //simply array !!!
+          //}
+          doc.add( gTargetTemp ); //цель
+          doc.add( currentTemp*100 ); //текущее значение
+          doc.add( gOutputPwr ); //воздействие
       serializeJson(doc, *response);
       request->send(response);    
     });

@@ -14,6 +14,9 @@ extern unsigned long imin;
 extern unsigned long isec;
 extern unsigned long iday;
 
+extern double gTargetTemp; //целевая температура
+extern double currentTemp; //текущая температура
+extern double gOutputPwr; //процент мощности на нагреватель (0-1000)
 extern volatile unsigned int arrTemp[108];
 
 extern void handleLogin(AsyncWebServerRequest *request);
