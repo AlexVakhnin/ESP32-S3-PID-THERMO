@@ -17,6 +17,7 @@
         <canvas id="mycanvas" height="600px"></canvas>
 
         <p class="pid-inf">
+            <span>Wind: 27 min </span>
             <span>PID: </span>
             <span id="targ">0</span>
             <span id="curr">0</span>
@@ -84,7 +85,7 @@ var myChart = new Chart(ctx_live, {
     scales: {
         y: {
             min: 0,
-            max: 300,
+            max: 380,
             ticks: {
               stepSize: 20
             }           
@@ -111,7 +112,7 @@ var myChart = new Chart(ctx_live, {
             var impact = myObj[2]; //воздействие
             document.getElementById("targ").innerHTML = targ;
             document.getElementById("curr").innerHTML = curr.toFixed(2);
-            document.getElementById("impact").innerHTML = impact.toFixed(2);
+            document.getElementById("impact").innerHTML = (impact/10).toFixed(2);
 
             for (var i=0;i<107;i++){
                myChart.data.datasets[0].data[i] = myChart.data.datasets[0].data[i+1]; /*сдвиг*/
