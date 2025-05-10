@@ -19,7 +19,7 @@ extern int kind_error;
 
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
 #define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET); //тут передаем только ссылку I2C
 
 String ds1 = ""; //дисплей-строка 1
 String ds2 = ""; //дисплей-строка 2
@@ -57,7 +57,7 @@ void disp_refrash(){
 void disp_setup(){
   //delay(1000);
   //ReDefine I2C Pins
-  Wire.begin(I2C_DATA, I2C_CLOCK);
+  Wire.begin(I2C_DATA, I2C_CLOCK); //создается интерф I2C c новыми выводами
   // Setup display SSD1306
   //delay(1000);
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);

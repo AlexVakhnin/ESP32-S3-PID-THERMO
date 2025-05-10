@@ -8,15 +8,15 @@ extern double currentTemp; //температура термопары
 extern bool overShootMode;
 extern unsigned long time_now;
 
-#define MAXDO   16
-#define MAXCS   15
-#define MAXCLK  14
-
-//void push_arr( double arr[], int elem, double n );
-//double sum_arr( double arr[], int elem );
+#define MAXDO   16  //MISO - data from slave  <--  (pull-up resistor 1-4.7 kom !!!)
+#define MAXCS   15  //SS - serial select to slave -->
+#define MAXCLK  14  //SC - serial clock to slave -->
 
 // initialize the Thermocouple
-Adafruit_MAX31855 thermocouple(MAXCLK, MAXCS, MAXDO);
+//Adafruit_MAX31855 thermocouple(MAXCLK, MAXCS, MAXDO); //это программный SPI
+
+// Example creating a thermocouple instance with hardware SPI
+Adafruit_MAX31855 thermocouple(MAXCS, &SPI); //это аппаратный SPI (ссылка на обьект SPI) !!!
 
 int senserror = 0; //счетчик ошибок сенсора
 int kind_error = -4; //вид ошибки сенсора
@@ -28,6 +28,10 @@ unsigned long sensLastTime = 0;  //для вычисления интервал�
 
 //инициализация сенсора
 void setupSensor(){
+
+    SPI.begin(MAXCLK, MAXDO/*, -1, -1*/); //создаем SPI со своими пинами !!!
+    //SPI.beginTransaction(SPISettings(5000000, MSBFIRST, SPI_MODE0)); // Настройка скорости передачи данных (5 МГц)
+
     Serial.print("Initializing sensor...");
     if (!thermocouple.begin()) {
         Serial.println("ERROR.");
