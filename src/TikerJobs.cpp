@@ -12,7 +12,7 @@ unsigned long imin;
 unsigned long isec;
 unsigned long iday;
 volatile unsigned int arrTemp[108]= {0}; //окно - 27 мин.(15*108/60)
-int counter_15s = 0;
+int counter_30s = 0;
 
 
 //сдвиг элементов массива влево с добавлением нового значения
@@ -27,9 +27,9 @@ void push_arr( volatile unsigned int arr[], int elem, unsigned int n ){
 //вычислить uptime д/ч/м/с (вызывается с периодом 5 сек)
 void get_uptime(){
 
-    if ( counter_15s > 0 ){counter_15s--;}
+    if ( counter_30s > 0 ){counter_30s--;}
     else { 
-        counter_15s = 2; //3*5=15
+        counter_30s = 5; //6*5=30
 
         //работа с массивом для графика
         int elements = sizeof(arrTemp) / sizeof(arrTemp[0]);//колич. точек X графика

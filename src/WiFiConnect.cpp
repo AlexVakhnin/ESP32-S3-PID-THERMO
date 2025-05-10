@@ -2,6 +2,8 @@
 #include <WiFi.h>
 #include "SPIFFS.h"
 
+#define SW_PIN 8
+
 //External Variables and functions
 
 extern String ds1;
@@ -99,10 +101,31 @@ void wifi_init(){
   Serial.print("IP address: ");Serial.println(ip);
   String s_ip = "IP."+String(ip[2])+"."+String(ip[3]); //на дисплей
   ds1 = s_ip;disp_show();
-  delay(6000);
+  delay(4000);
+
 } 
 
+//если APN , выключаем его по кнопке
+void apn_stop(){
 
+  if(flag_apn){ //заглушка если APN
+    ds2 = "APN IS ON";disp_show();
+    pinMode(SW_PIN, INPUT_PULLUP); //инициализируем порт
+    //delay(300);
+    while(1){
+      if (digitalRead(SW_PIN) == LOW) {
+        //flag_apn = false;
+        WiFi.disconnect();
+        WiFi.mode(WIFI_OFF);
+        delay(300);
+        break;
+      }      
+      delay(100);
+    }
+  }
+}
+
+//повторный коннект, в случае потери связи, вызывается из loop()
 void handle_wifi(){
   if (WiFi.status() != WL_CONNECTED)  {
     Serial.print(millis());

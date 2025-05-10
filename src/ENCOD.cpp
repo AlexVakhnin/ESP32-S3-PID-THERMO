@@ -6,6 +6,7 @@
 
 extern volatile bool tempfail; //флаг для блокировки реле по резкому падению температуры
 extern bool overheat; //флаг для блокировки реле по перегреву
+extern boolean flag_apn;
 
 volatile int counter = 0;
 int lastStateCLK;
@@ -44,7 +45,6 @@ void encoder_handle() {
         if(counter != 0){counter=0;}
         tempfail = false;
         overheat = false;
-        //delay(100);
     }
 }
 

@@ -17,9 +17,10 @@ extern bool pid_compute();
 extern void updateCurrentTemperature();
 extern void setHeatPowerPercentage(float power);
 extern void encoder_setup();
-extern void encoder_handle();
+extern void encoder_handle(); //кнопка энкодера
 extern int encoder_value();
 extern void setupSensor();
+extern void apn_stop();
 extern String ds1;
 extern String ds2;
 extern double gOutputPwr; //результат вычислений PID
@@ -28,52 +29,28 @@ extern double currentTemp; //текущая температура по датч
 extern bool overShootMode; //далеко от цели..
 extern int senserror; //счетчик ошибок термопары
 
-//Для UpTime
-Ticker hTicker;
-
-//Global Variables
-//unsigned long sUpTime;
-//unsigned long isec = 0; //uptime: sec
-//unsigned long imin = 0; //uptime: min
-//unsigned long ihour = 0; //uptime: hour
-//unsigned long iday = 0; //uptime: day
+Ticker hTicker; //Для UpTime, графиков, защиты..
 
 long time_now=0; //текущее время в цикле
 long time_last=0; //хранит аремя для периодического события PID алгоритма
 
-
 void setup() {
-
    Serial.begin(115200);
 
-  //PSRAM Initialisation
-  if(psramInit()){
+  if(psramInit()){ //PSRAM Initialisation
         Serial.println("\nThe PSRAM is correctly initialized");
   }else{
         Serial.println("\nPSRAM does not work");
   }
-  //OLED SSD1306 128X32
-  disp_setup();
-
-  Serial.println("-----------------------------------------");
-  Serial.printf("Total heap:\t%d \r\n", ESP.getHeapSize());
-  Serial.printf("Free heap:\t%d \r\n", ESP.getFreeHeap());
-  Serial.printf("Total PSRAM:\t%d \r\n", ESP.getPsramSize());
-  Serial.printf("Free PSRAM:\t%d \r\n", ESP.getFreePsram());
-  Serial.printf("Flash size:\t%d (bytes)\r\n", ESP.getFlashChipSize());
-  Serial.println("-----------------------------------------");
+  disp_setup(); //OLED SSD1306 128X32
 
   initSPIFFS(); //инициализация SPIFFS
+    
+  hTicker.attach_ms(5000, get_uptime); //инициализация прерывания (5 sec.)
 
-    //инициализация прерывания (5 sec.)
-  hTicker.attach_ms(5000, get_uptime);
-
-
-  //Инициализация WIFI
-  wifi_init();
-
-  // Route for root / web page
+  wifi_init(); //Инициализация WIFI
   web_init();
+  apn_stop(); //если APN , выключаем его кнопкой т.к. влияет на сенсор...
   pwm_setup();
   pid_setup();
   encoder_setup();
@@ -89,7 +66,7 @@ void setup() {
 void loop() {
 
   time_now=millis();
-  updateCurrentTemperature(); //обновление текущей температуры с термопары (100 мс.)
+  updateCurrentTemperature(); //обновление текущей температуры с термопары (150 мс.)
 
   if(abs(time_now-time_last)>=RFR_INTERVAL or time_last > time_now) { //обработка задач для T=200 мс.
       gTargetTemp = encoder_value(); //данные с энкодера
