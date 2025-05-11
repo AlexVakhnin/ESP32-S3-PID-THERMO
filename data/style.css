@@ -53,6 +53,14 @@ background-color: #f2f3f3;
 	font-size: 18px;
 	font-weight: 700;
 }
+.first-link {  /*параграф с системной информацией, верхняя строка*/
+	margin-top: 80px;
+  /*
+	margin-block-end: 20px;	
+	font-size: 18px;
+	font-weight: 700;
+  */
+}
 .pid-inf {  /*под графиком, нижняя строка*/
 	margin-block-start: 5px;
 	margin-block-end: 5px;	

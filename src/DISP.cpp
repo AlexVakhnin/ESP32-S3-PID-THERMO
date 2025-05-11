@@ -21,15 +21,31 @@ extern int kind_error;
 #define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET); //тут передаем только ссылку I2C
 
+String ds1_1 = ""; //для gTargetTem
+String ds1_2 = ""; //для currentTemp
 String ds1 = ""; //дисплей-строка 1
 String ds2 = ""; //дисплей-строка 2
 
 //char buffer[50]; //для sprintf()
 
 // Обновление состояния дисплея
+void disp_show_temp(){
+  display.clearDisplay();
+
+  display.setCursor(0,0); //координаты 1-й строки 1-го числа
+  display.print(ds1_1);
+  display.setCursor(64-8,0); //координаты 1-й строки 2-го числа
+  display.print(ds1_2);
+
+  display.setCursor(0,18); //координаты 2-й строки
+  display.print(ds2);
+  display.display();//show
+
+}
+// Обновление состояния дисплея
 void disp_show(){
   display.clearDisplay();
-  display.setCursor(0,0); //координаты 1-й строки
+  display.setCursor(0,0); //координаты 1-й строки 1-го числа
   display.print(ds1);
   display.setCursor(0,18); //координаты 2-й строки
   display.print(ds2);
@@ -37,20 +53,19 @@ void disp_show(){
 
 }
 
-//обновить дисплей
+//обновить дисплей T=200ms
 void disp_refrash(){
   double dTemp = kind_error;
   if (senserror==0) dTemp=currentTemp;
 
+  //ds1=String((int)gTargetTemp)+" "+String(dTemp);
+  ds1_1 = String((int)gTargetTemp); ds1_2 = String(dTemp);
 
-  //sprintf(buffer, "%3d %.2f", (int)gTargetTemp,dTemp);
-  //ds1=String(buffer);
-  ds1=String((int)gTargetTemp)+" "+String(dTemp);
 
   if (overheat) ds2="OVERHEAT";
   else if (tempfail) ds2="TEMPFAIL";
   else ds2=String(overShootMode)+"  "+String(gOutputPwr/10)+"%";
-  disp_show(); //результат на дисплей
+  disp_show_temp(); //результат на дисплей
 }
 
 //SSD1306 OLED Init

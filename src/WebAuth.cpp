@@ -79,15 +79,23 @@ bool handleFileRead(AsyncWebServerRequest *request, String path) {
         Serial.println(path);
 
         //Отдельная обработка запросов у которых есть processor, и у каждого свой..
+        /*
         if (path.equals("/index.html")){
             Serial.println("caught the /index.html, need processor..");
             AsyncWebServerResponse *response = request->beginResponse(SPIFFS, path, contentType,false, processor);
             //response->addHeader("X-Content-Type-Options", "nosniff");//не пытаться угадывать MIME (contrnt-type)
             response->addHeader("Cache-Control","no-cache");
-            request->send(response);    
+            request->send(response);
+
+         } else*/ 
+        if (path.equals("/net.html")){
+            Serial.println("caught the /net.html, need processor..");
+            AsyncWebServerResponse *response = request->beginResponse(SPIFFS, path, contentType,false, processor);
+            response->addHeader("Cache-Control","no-cache");
+            request->send(response);
+
         } else { //все остальные запросы..
             AsyncWebServerResponse *response = request->beginResponse(SPIFFS, path, contentType);
-            //response->addHeader("X-Content-Type-Options", "nosniff");//не пытаться угадывать MIME (contrnt-type)
             response->addHeader("Cache-Control","no-cache");
             request->send(response);
         }

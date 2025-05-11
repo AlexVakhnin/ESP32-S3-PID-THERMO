@@ -97,6 +97,9 @@ server.on("/posts", HTTP_POST, [](AsyncWebServerRequest *request){
     server.on("/login", HTTP_POST, handleLogin);
     server.on("/logout", HTTP_GET, handleLogout);
 
+    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+      request->send(SPIFFS, "/index.html", String(), false, processor);
+    });
     server.on("/graph.html", HTTP_GET, [](AsyncWebServerRequest *request){
       request->send(SPIFFS, "/graph.html", String(), false, processor);
     });
