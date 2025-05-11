@@ -15,7 +15,9 @@ extern unsigned long time_now;
 // initialize the Thermocouple
 //Adafruit_MAX31855 thermocouple(MAXCLK, MAXCS, MAXDO); //это программный SPI
 
-// Example creating a thermocouple instance with hardware SPI
+//SPIClass myspi(HSPI); //если требуется несколько портов SPI..
+//Adafruit_MAX31855 thermocouple(MAXCS, &myspi);
+
 Adafruit_MAX31855 thermocouple(MAXCS, &SPI); //это аппаратный SPI (ссылка на обьект SPI) !!!
 
 int senserror = 0; //счетчик ошибок сенсора
@@ -29,8 +31,9 @@ unsigned long sensLastTime = 0;  //для вычисления интервал�
 //инициализация сенсора
 void setupSensor(){
 
+    //myspi.begin(MAXCLK, MAXDO); //если требуется несколько портов SPI..
     SPI.begin(MAXCLK, MAXDO/*, -1, -1*/); //создаем SPI со своими пинами !!!
-    //SPI.beginTransaction(SPISettings(5000000, MSBFIRST, SPI_MODE0)); // Настройка скорости передачи данных (5 МГц)
+    //SPI.beginTransaction(SPISettings(5000000, MSBFIRST, SPI_MODE0)); //скорость передачи данных 5 МГц (1 МГц умолч.)
 
     Serial.print("Initializing sensor...");
     if (!thermocouple.begin()) {

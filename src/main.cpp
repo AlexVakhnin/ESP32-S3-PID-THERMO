@@ -37,15 +37,6 @@ long time_last=0; //хранит аремя для периодического 
 void setup() {
    Serial.begin(115200);
 
-
-  Serial.println("-----------------------------------------");
-  Serial.println("SPI_SCK= "+String(SCK));
-  Serial.println("SPI_MOSI= "+String(MOSI));
-  Serial.println("SPI_MISO= "+String(MISO));
-  Serial.println("SPI_SS= "+String(SS));
-  Serial.println("-----------------------------------------");
-
-
   if(psramInit()){ //PSRAM Initialisation
         Serial.println("\nThe PSRAM is correctly initialized");
   }else{
@@ -59,7 +50,7 @@ void setup() {
 
   wifi_init(); //Инициализация WIFI
   web_init();
-  apn_stop(); //если APN , выключаем его кнопкой т.к. влияет на сенсор...
+  //apn_stop(); //если APN , выключаем его кнопкой т.к. влияет на сенсор...
   pwm_setup();
   pid_setup();
   encoder_setup();
