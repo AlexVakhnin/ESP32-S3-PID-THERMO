@@ -50,7 +50,7 @@ void setup() {
 
   wifi_init(); //Инициализация WIFI
   web_init();
-  //apn_stop(); //если APN , выключаем его кнопкой т.к. влияет на сенсор...
+  apn_stop(); //если APN , выключаем его кнопкой т.к. влияет на сенсор...
   pwm_setup();
   pid_setup();
   encoder_setup();

@@ -48,7 +48,7 @@ void get_uptime(){
     iday = n/24; //количество всех дней (целая часть)
 
     //устанавливаем блокировку по резкому обвалу температуры
-    if (oldrawTemp>rawTemp and abs(oldrawTemp-rawTemp)>5){tempfail = true;}
+    if (oldrawTemp>rawTemp and abs(oldrawTemp-rawTemp)>10){tempfail = true;}
     oldrawTemp = rawTemp;
 
 }

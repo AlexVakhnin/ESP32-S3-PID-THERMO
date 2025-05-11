@@ -100,6 +100,9 @@ server.on("/posts", HTTP_POST, [](AsyncWebServerRequest *request){
     server.on("/graph.html", HTTP_GET, [](AsyncWebServerRequest *request){
       request->send(SPIFFS, "/graph.html", String(), false, processor);
     });
+    server.on("/pid.html", HTTP_GET, [](AsyncWebServerRequest *request){
+      request->send(SPIFFS, "/pid.html", String(), false, processor);
+    });
   
 
     // Все картинки кэшируем без проверки
