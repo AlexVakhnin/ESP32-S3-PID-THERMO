@@ -31,13 +31,14 @@
 
 <script>
 
+let dataCO2 = new Array(108); for (var i=0;i<=107;i++){dataCO2[i]=0}//current temperature
+let dataCO3 = new Array(108); for (var i=0;i<=107;i++){dataCO3[i]=0}//target temperature
+let dataCO4 = new Array(108); for (var i=0;i<=107;i++){dataCO4[i]=0}//PID result
+let xValues = new Array(108); for (var i=0;i<=107;i++){xValues[i]="0.0"}//метки шкалы X
 
-let dataCO2 = [0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0 ];
-let dataCO3 = [0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0 ];
-let dataCO4 = [0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0 ];
-const xValues =  [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36, 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36, 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36];
+//const xValues =  [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36, 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36, 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36];
 
-    //заполнение массива данных ри загрузке страницы
+    //действие при загрузке страницы
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {	  
       if (this.readyState == 4 && this.status == 200) {
@@ -62,19 +63,19 @@ var myChart = new Chart(ctx_live, {
     labels: xValues,    //метки шкалы X (передается только ссылка xValues)
     datasets: [
         { 
-        data: dataCO2,  //передается только ссылка на массив dataCO2
+        data: dataCO2,  //ссылка на массив dataCO2
         borderColor: "gray",
         fill: false, //заливка
         cubicInterpolationMode: 'monotone' //сглаживание углов
         },
         { 
-        data: dataCO3,  //передается только ссылка на массив dataCO2
+        data: dataCO3,  //ссылка на массив dataCO3
         borderColor: "blue",
         fill: false, //заливка
         cubicInterpolationMode: 'monotone' //сглаживание углов
         },
         { 
-        data: dataCO4,  //передается только ссылка на массив dataCO2
+        data: dataCO4,  //ссылка на массив dataCO4
         borderColor: "orange",
         fill: false, //заливка
         cubicInterpolationMode: 'monotone' //сглаживание углов
@@ -85,7 +86,7 @@ var myChart = new Chart(ctx_live, {
     scales: {
         y: {
             min: 0,
-            max: 380,
+            max: 400,
             ticks: {
               stepSize: 20
             }           
@@ -118,10 +119,13 @@ var myChart = new Chart(ctx_live, {
                myChart.data.datasets[0].data[i] = myChart.data.datasets[0].data[i+1]; /*сдвиг*/
                myChart.data.datasets[1].data[i] = myChart.data.datasets[1].data[i+1]; /*сдвиг*/
                myChart.data.datasets[2].data[i] = myChart.data.datasets[2].data[i+1]; /*сдвиг*/
+               myChart.data.labels[i] = myChart.data.labels[i+1]; /*сдвиг*/
 		    }
             myChart.data.datasets[0].data[107] = targ;
             myChart.data.datasets[1].data[107] = curr;
             myChart.data.datasets[2].data[107] = impact/10;
+            let now = new Date();let s = now.getSeconds();let m = now.getMinutes();
+            myChart.data.labels[107] = m.toString().padStart(2, "0")+"."+s.toString().padStart(2, "0");
             
 		    myChart.update(); //обновить картинку графика
 
